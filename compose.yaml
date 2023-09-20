@@ -1,4 +1,10 @@
 services:
+  spring-boot-app:
+    build: .
+    depends_on:
+      - postgres
+    links:
+      - postgres
   postgres:
     image: 'postgres:latest'
     environment:
