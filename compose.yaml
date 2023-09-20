@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=trafilea'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_USER=trafilea'
+    ports:
+      - '5432:5432'
