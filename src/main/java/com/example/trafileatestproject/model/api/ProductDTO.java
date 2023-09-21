@@ -1,5 +1,6 @@
 package com.example.trafileatestproject.model.api;
 
+import com.example.trafileatestproject.model.entity.Category;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -13,5 +14,5 @@ import java.util.Set;
 public class ProductDTO {
     private String name;
     private BigDecimal price;
-    private Set<CategoryEnum> categories;
+    private Set<Category> categories;
 }

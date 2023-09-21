@@ -39,9 +39,11 @@ public class Product {
 
     private BigDecimal price;
 
-    @ElementCollection(targetClass = CategoryEnum.class)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "category")
-    private Set<CategoryEnum> categories = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "product_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
 }

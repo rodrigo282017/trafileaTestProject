@@ -30,11 +30,6 @@ public class Category {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "product_category",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
+    @ManyToMany(mappedBy = "categories")
     private Set<Product> products = new HashSet<>();
 }

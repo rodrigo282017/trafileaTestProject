@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_initial_tables
+      author: Rodrigo
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/001_initial_tables.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: 002_insert_initial_categories
+      author: Rodrigo
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/002_insert_initial_categories.sql
+            relativeToChangelogFile: true

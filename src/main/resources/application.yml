@@ -6,6 +6,7 @@ spring:
     password: postgres
   jpa:
     show-sql: true
-    hibernate:
-      ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/db.changelog.yaml
+    enabled: true
