@@ -9,9 +9,8 @@ import java.util.UUID;
 @Data
 @Builder
 @ToString
-public class UserDTO {
-    private UUID id;
-    private String name;
-    private String phoneNumber;
-    private int age;
+public class CartProductDTO {
+    private UUID cartId;
+    private UUID productId;
+    private int quantity;
 }

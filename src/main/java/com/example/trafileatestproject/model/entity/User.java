@@ -23,5 +23,5 @@ public class User {
 
     private String phoneNumber;
 
-    private String age;
+    private int age;
 }

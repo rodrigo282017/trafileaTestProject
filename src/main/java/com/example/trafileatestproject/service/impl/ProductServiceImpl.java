@@ -20,22 +20,23 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        List<Product> product = productRepository.findAll();
+        List<Product> productList = productRepository.findAll();
 
-        return new ProductMapper().toDtos(product);
+        return new ProductMapper().toDtos(productList);
     }
 
     @Override
     public ProductDTO getProductById(String id) {
         Product product = productRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new EntityNotFoundException("Identity not found for this id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found for this id: " + id));
 
         return new ProductMapper().toDto(product);
     }
 
     @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
-        productRepository.save(new ProductMapper().toEntity(productDTO));
+        Product product = productRepository.save(new ProductMapper().toEntity(productDTO));
+        productDTO.setId(product.getId());
 
         return productDTO;
     }
@@ -45,7 +46,7 @@ public class ProductServiceImpl implements IProductService {
         Optional<Product> optionalProduct = productRepository.findById(UUID.fromString(id));
 
         if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Identity not found for this id: " + id);
+            throw new EntityNotFoundException("Product not found for this id: " + id);
         }
 
         Product product = optionalProduct.get();
@@ -58,8 +59,8 @@ public class ProductServiceImpl implements IProductService {
             product.setPrice(productDTO.getPrice());
         }
 
-        if (productDTO.getCategories() != null) {
-            product.setCategories(productDTO.getCategories());
+        if (productDTO.getCategory() != null) {
+            product.setCategory(productDTO.getCategory());
         }
 
         productRepository.save(product);

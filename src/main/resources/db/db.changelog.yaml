@@ -15,3 +15,11 @@ databaseChangeLog:
             encoding: utf8
             path: changelog/002_insert_initial_categories.sql
             relativeToChangelogFile: true
+  - changeSet:
+      id: 003_alter_table_cartProduct
+      author: Rodrigo
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/003_alter_table_cartProduct.sql
+            relativeToChangelogFile: true

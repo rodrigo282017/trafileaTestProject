@@ -1,0 +1,29 @@
+package com.example.trafileatestproject.model.mapper;
+
+import com.example.trafileatestproject.model.api.CartProductDTO;
+import com.example.trafileatestproject.model.entity.CartProduct;
+import com.example.trafileatestproject.util.Mapper;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+public class CartProductMapper implements Mapper<CartProductDTO, CartProduct> {
+    @Override
+    public CartProductDTO toDto(CartProduct cartProduct) {
+        return CartProductDTO.builder()
+                .cartId(cartProduct.getId().getCartId())
+                .productId(cartProduct.getId().getProductId())
+                .build();
+    }
+
+    @Override
+    public List<CartProductDTO> toDtos(List<CartProduct> cartProducts) {
+        return null;
+    }
+
+    @Override
+    public CartProduct toEntity(CartProductDTO cartProductDTO) {
+        return null;
+    }
+}

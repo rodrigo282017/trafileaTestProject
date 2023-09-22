@@ -1,7 +1,7 @@
 package com.example.trafileatestproject.controller;
 
-import com.example.trafileatestproject.model.api.ProductDTO;
-import com.example.trafileatestproject.service.IProductService;
+import com.example.trafileatestproject.model.api.UserDTO;
+import com.example.trafileatestproject.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,39 +19,39 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/products")
-public class ProductController {
-    private final IProductService productService;
+@RequestMapping("/api/users")
+public class UserController {
+    private final IUserService userService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAllProducts();
+    public ResponseEntity<List<UserDTO>> getAllProducts() {
+        List<UserDTO> products = userService.getAllUsers();
 
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<UserDTO> getProductById(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO createdProduct = productService.createProduct(productDTO);
+    public ResponseEntity<UserDTO> createProduct(@RequestBody UserDTO UserDTO) {
+        UserDTO createdProduct = userService.createUser(UserDTO);
 
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable String id, @RequestBody ProductDTO productDTO) {
-        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
+    public ResponseEntity<UserDTO> updateProduct(@PathVariable String id, @RequestBody UserDTO UserDTO) {
+        UserDTO updatedProduct = userService.updateProduct(id, UserDTO);
 
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
-        productService.deleteProduct(id);
+        userService.deleteUser(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

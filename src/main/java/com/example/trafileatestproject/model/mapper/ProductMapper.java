@@ -14,7 +14,8 @@ public class ProductMapper implements Mapper<ProductDTO, Product> {
     @Override
     public ProductDTO toDto(Product product) {
         return ProductDTO.builder()
-                .categories(product.getCategories())
+                .id(product.getId())
+                .category(product.getCategory())
                 .name(product.getName())
                 .price(product.getPrice())
                 .build();
@@ -25,13 +26,17 @@ public class ProductMapper implements Mapper<ProductDTO, Product> {
         return products.stream().map(this::toDto).toList();
     }
 
+    public List<Product> toEntities(List<ProductDTO> productDTOList) {
+        return productDTOList.stream().map(this::toEntity).toList();
+    }
+
     @Override
     public Product toEntity(ProductDTO productDTO) {
         return Product.builder()
-                .id(UUID.randomUUID())
+                .id(productDTO.getId())
                 .name(productDTO.getName())
                 .price(productDTO.getPrice())
-                .categories(productDTO.getCategories())
+                .category(productDTO.getCategory())
                 .build();
     }
 }

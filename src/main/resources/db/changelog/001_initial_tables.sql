@@ -3,7 +3,7 @@
 CREATE TABLE "user"
 (
     id           uuid primary key not null,
-    age          VARCHAR(256),
+    age          integer,
     name         VARCHAR(256),
     phone_number VARCHAR(256)
 );
@@ -18,9 +18,10 @@ CREATE TABLE cart
 
 CREATE TABLE product
 (
-    id    uuid primary key not null,
-    name  VARCHAR(256),
-    price numeric(38, 2)
+    id       uuid primary key not null,
+    name     VARCHAR(256),
+    price    numeric(38, 2),
+    category VARCHAR(256)
 );
 
 CREATE TABLE cart_product
@@ -47,16 +48,4 @@ CREATE TABLE "order"
     order_total numeric(38, 2),
     products    integer          not null,
     shipping    numeric(38, 2)
-);
-
-create table product_category
-(
-    product_id  uuid not null,
-    category    VARCHAR(256),
-    category_id uuid not null,
-    primary key (product_id, category_id),
-    foreign key (product_id) references product (id)
-        match simple on update no action on delete no action,
-    foreign key (category_id) references category (id)
-        match simple on update no action on delete no action
 );
