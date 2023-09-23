@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.math.BigDecimal;
+
 import java.util.UUID;
 
 @Data
@@ -12,6 +12,6 @@ import java.util.UUID;
 @ToString
 public class OrderDTO {
     private UUID id;
-    private String cartID;
+    private CartDTO cart;
     private TotalsDTO totals;
 }

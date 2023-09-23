@@ -36,17 +36,17 @@ public class CartController {
         return new ResponseEntity<>(createdCart, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}/products/{productId}/modify-quantity")
+    @PutMapping("/{id}/products/{productId}/modify-quantity/{quantity}")
     public ResponseEntity<CartProductDTO> modifyProductQuantity(@PathVariable String id,
                                                                 @PathVariable String productId,
-                                                                @RequestBody int quantity) {
+                                                                @PathVariable int quantity) {
         CartProductDTO modifiedCartProduct = cartService.modifyProductQuantity(id, productId, quantity);
 
         return new ResponseEntity<>(modifiedCartProduct, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CartDTO> getProductById(@PathVariable String id) {
+    public ResponseEntity<CartDTO> getCartById(@PathVariable String id) {
         return ResponseEntity.ok(cartService.getCartById(id));
     }
 

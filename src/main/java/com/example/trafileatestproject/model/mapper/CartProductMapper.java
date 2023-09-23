@@ -14,12 +14,13 @@ public class CartProductMapper implements Mapper<CartProductDTO, CartProduct> {
         return CartProductDTO.builder()
                 .cartId(cartProduct.getId().getCartId())
                 .productId(cartProduct.getId().getProductId())
+                .quantity(cartProduct.getQuantity())
                 .build();
     }
 
     @Override
     public List<CartProductDTO> toDtos(List<CartProduct> cartProducts) {
-        return null;
+        return cartProducts.stream().map(this::toDto).toList();
     }
 
     @Override

@@ -19,11 +19,14 @@ public class CartMapper implements Mapper<CartDTO, Cart> {
 
     @Override
     public List<CartDTO> toDtos(List<Cart> carts) {
-        return null;
+        return carts.stream().map(this::toDto).toList();
     }
 
     @Override
     public Cart toEntity(CartDTO cartDTO) {
-        return null;
+        return Cart.builder()
+                .id(cartDTO.getId())
+                .user(new UserMapper().toEntity(cartDTO.getUser()))
+                .build();
     }
 }

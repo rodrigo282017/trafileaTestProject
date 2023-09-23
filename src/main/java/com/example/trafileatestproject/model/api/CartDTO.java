@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -13,5 +13,5 @@ import java.util.UUID;
 public class CartDTO {
     private UUID id;
     private UserDTO user;
-    private ProductQuantityDTO productQuantity;
+    private Set<ProductQuantityDTO> productQuantity;
 }

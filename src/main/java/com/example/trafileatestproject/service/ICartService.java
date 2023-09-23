@@ -4,7 +4,10 @@ import com.example.trafileatestproject.model.api.CartDTO;
 import com.example.trafileatestproject.model.api.CartProductDTO;
 import com.example.trafileatestproject.model.api.ProductDTO;
 import com.example.trafileatestproject.model.api.ProductQuantityDTO;
+import com.example.trafileatestproject.model.api.TotalsDTO;
 
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ICartService {
@@ -15,4 +18,6 @@ public interface ICartService {
     CartProductDTO modifyProductQuantity(String id, String productId, int quantity);
 
     CartDTO getCartById(String id);
+
+    TotalsDTO calculateTotals(String cartId);
 }
