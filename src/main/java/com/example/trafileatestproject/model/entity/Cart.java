@@ -20,7 +20,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "cart")
-public class Cart {
+public class Cart extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

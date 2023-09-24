@@ -188,8 +188,8 @@ public class CartServiceImpl implements ICartService {
     }
 
     private BigDecimal calculateCartTotalPrice(List<CartProduct> cartProducts, BigDecimal shippingPrice) {
-        //Important... In the case of the coffee discount... I'm going to apply a discount in the cheapest product.
-        //I have thought about a voucher system but to simplify I think is better this approach
+        /*Important... In the case of the coffee discount... I'm going to apply a discount in the cheapest product.
+        I have thought about a voucher system but to simplify I think is better this approach*/
 
         BigDecimal totalPrice = BigDecimal.ZERO;
 
@@ -220,7 +220,7 @@ public class CartServiceImpl implements ICartService {
         }
 
         // Subtract shipping cost
-        totalPrice = totalPrice.subtract(shippingPrice).subtract(coffeeCheapestProductPrice);
+        totalPrice = totalPrice.add(shippingPrice).subtract(coffeeCheapestProductPrice);
 
         return totalPrice.setScale(2, RoundingMode.UP);
     }

@@ -21,7 +21,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "\"order\"")
-public class Order {
+public class Order extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

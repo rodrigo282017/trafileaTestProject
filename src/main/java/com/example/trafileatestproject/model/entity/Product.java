@@ -23,7 +23,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

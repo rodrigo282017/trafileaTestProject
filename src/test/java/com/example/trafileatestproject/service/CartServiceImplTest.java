@@ -14,7 +14,6 @@ import com.example.trafileatestproject.model.entity.CartProduct;
 import com.example.trafileatestproject.model.entity.CartProductId;
 import com.example.trafileatestproject.model.entity.Product;
 import com.example.trafileatestproject.model.entity.User;
-import com.example.trafileatestproject.model.mapper.ProductMapper;
 import com.example.trafileatestproject.model.mapper.UserMapper;
 import com.example.trafileatestproject.repository.CartProductRepository;
 import com.example.trafileatestproject.repository.CartRepository;
@@ -44,13 +43,10 @@ class CartServiceImplTest {
 
     @Mock
     private CartRepository cartRepository;
-
     @Mock
     private IUserService userService;
-
     @Mock
     private IProductService productService;
-
     @Mock
     private CartProductRepository cartProductRepository;
 
@@ -110,14 +106,6 @@ class CartServiceImplTest {
                 .price(BigDecimal.valueOf(20))
                 .category(CategoryEnum.ACCESSORIES)
                 .build();
-
-        Set<CartProduct> cartProductSet = new HashSet<>();
-        cartProductSet.add(CartProduct.builder()
-                .id(new CartProductId(UUID.fromString(cartId), productId))
-                .cart(cart)
-                .product(new ProductMapper().toEntity(productDTO))
-                .quantity(2)
-                .build());
 
         Set<ProductQuantityDTO> productQuantityDTOList = new HashSet<>();
         productQuantityDTOList.add(productQuantityDTO);
@@ -243,48 +231,194 @@ class CartServiceImplTest {
         String cartId = UUID.randomUUID().toString();
         UUID productId1 = UUID.randomUUID();
         UUID productId2 = UUID.randomUUID();
+        UUID productId3 = UUID.randomUUID();
+        UUID productId4 = UUID.randomUUID();
+        UUID productId5 = UUID.randomUUID();
 
-        Product product1 = Product.builder()
-                .id(productId1)
-                .name("Product 1")
-                .price(BigDecimal.valueOf(20))
-                .category(CategoryEnum.ACCESSORIES)
-                .build();
+        BigDecimal product1Price = BigDecimal.valueOf(10);
+        BigDecimal product2Price = BigDecimal.valueOf(20);
+        BigDecimal product3Price = BigDecimal.valueOf(30);
+        BigDecimal product4Price = BigDecimal.valueOf(40);
+        BigDecimal product5Price = BigDecimal.valueOf(50);
 
-        Product product2 = Product.builder()
-                .id(productId2)
-                .name("Product 2")
-                .price(BigDecimal.valueOf(30))
-                .category(CategoryEnum.EQUIPMENT)
-                .build();
+        //Create 3 products --> Category coffee
+        Product product1 = createProduct(productId1, "Product 1", product1Price, CategoryEnum.ACCESSORIES);
+        Product product2 = createProduct(productId2, "Product 2", product2Price, CategoryEnum.EQUIPMENT);
+        Product product3 = createProduct(productId3, "Product 3", product3Price, CategoryEnum.COFFEE);
+        Product product4 = createProduct(productId4, "Product 4", product4Price, CategoryEnum.COFFEE);
+        Product product5 = createProduct(productId5, "Product 5", product5Price, CategoryEnum.COFFEE);
 
-        CartProduct cartProduct1 = CartProduct.builder()
-                .id(new CartProductId(UUID.fromString(cartId), productId1))
-                .product(product1)
-                .quantity(2)
-                .build();
+        /*
+        Shipping 8 --> Base price + 1 (accessories) + 2 (equipment)
+        Products --> 5. The quantity of each product can be variable
+        Discounts --> 30. The cheapest coffee product should be free
 
-        CartProduct cartProduct2 = CartProduct.builder()
-                .id(new CartProductId(UUID.fromString(cartId), productId2))
-                .product(product2)
-                .quantity(1)
-                .build();
+        Total = 160 - 30 + 8 = 138
+        */
 
-        when(cartProductRepository.findAllByCartId(UUID.fromString(cartId))).thenReturn(List.of(cartProduct1, cartProduct2));
+        CartProduct cartProduct1 = createCartProduct(cartId, productId1, product1, 2);
+        CartProduct cartProduct2 = createCartProduct(cartId, productId2, product2, 1);
+        CartProduct cartProduct3 = createCartProduct(cartId, productId3, product3, 1);
+        CartProduct cartProduct4 = createCartProduct(cartId, productId4, product4, 1);
+        CartProduct cartProduct5 = createCartProduct(cartId, productId5, product5, 1);
+
+        when(cartProductRepository.findAllByCartId(UUID.fromString(cartId)))
+                .thenReturn(List.of(cartProduct1, cartProduct2, cartProduct3, cartProduct4, cartProduct5));
 
         //Call service
         TotalsDTO totalsDTO = cartService.calculateTotals(cartId);
 
         assertNotNull(totalsDTO);
-        assertEquals(2, totalsDTO.getProducts());
-        assertEquals(BigDecimal.valueOf(8.0), totalsDTO.getShippingPrice());
-        //assertEquals(BigDecimal.valueOf(62.0), totalsDTO.getTotalPrice());
-        //assertEquals(BigDecimal.valueOf(0.00), totalsDTO.getDiscounts());
+        assertEquals(5, totalsDTO.getProducts());
+
+        //To simplify these magic numbers are exposed, but should be calculated
+        assertEquals(0, BigDecimal.valueOf(8).compareTo(totalsDTO.getShippingPrice()));
+        assertEquals(0, BigDecimal.valueOf(30).compareTo(totalsDTO.getDiscounts()));
+        assertEquals(0, BigDecimal.valueOf(138).compareTo(totalsDTO.getTotalPrice()));
+    }
+
+    @Test
+    void calculateTotals_ValidCartIdWithCoffeePromotion_ReturnsFreeCoffeeProduct() {
+        String cartId = UUID.randomUUID().toString();
+        UUID productId1 = UUID.randomUUID();
+        UUID productId2 = UUID.randomUUID();
+        UUID productId3 = UUID.randomUUID();
+
+        BigDecimal cheapestProductPrice = BigDecimal.valueOf(20);
+        BigDecimal product2Price = BigDecimal.valueOf(30);
+        BigDecimal product3Price = BigDecimal.valueOf(40);
+
+        //Create 3 products --> Category coffee
+        Product product1 = createProduct(productId1, "Product 1", cheapestProductPrice, CategoryEnum.COFFEE);
+        Product product2 = createProduct(productId2, "Product 2", product2Price, CategoryEnum.COFFEE);
+        Product product3 = createProduct(productId3, "Product 3", product3Price, CategoryEnum.COFFEE);
+
+        BigDecimal expectedShippingPrice = BigDecimal.valueOf(5); //Base price
+        int expectedProducts = 3;
+
+        /*
+        Shipping 5 --> Base price
+        Products --> 3. The quantity of each product can be variable
+        Discounts --> 20. The cheapest product should be free
+
+        Total = 90 - 20 + 5 = 75
+        */
+
+        BigDecimal expectedTotalPrice =
+                product2Price
+                        .add(product3Price)
+                        .add(expectedShippingPrice);
+
+        CartProduct cartProduct1 = createCartProduct(cartId, productId1, product1, 1);
+        CartProduct cartProduct2 = createCartProduct(cartId, productId2, product2, 1);
+        CartProduct cartProduct3 = createCartProduct(cartId, productId3, product3, 1);
+
+        when(cartProductRepository.findAllByCartId(UUID.fromString(cartId))).thenReturn(List.of(cartProduct1, cartProduct2, cartProduct3));
+
+        //Call service
+        TotalsDTO totalsDTO = cartService.calculateTotals(cartId);
+
+        assertNotNull(totalsDTO);
+        assertEquals(expectedProducts, totalsDTO.getProducts());
+        assertEquals(0, expectedShippingPrice.compareTo(totalsDTO.getShippingPrice()));
+        assertEquals(0, cheapestProductPrice.compareTo(totalsDTO.getDiscounts()));
+        assertEquals(0, expectedTotalPrice.compareTo(totalsDTO.getTotalPrice()));
+    }
+
+    @Test
+    void calculateTotals_ValidCartIdWithEquipmentPromotion_ReturnsFreeShipping() {
+        String cartId = UUID.randomUUID().toString();
+        UUID productId1 = UUID.randomUUID();
+        UUID productId2 = UUID.randomUUID();
+        UUID productId3 = UUID.randomUUID();
+
+        BigDecimal product1Price = BigDecimal.valueOf(20);
+        BigDecimal product2Price = BigDecimal.valueOf(30);
+        BigDecimal product3Price = BigDecimal.valueOf(40);
+
+        //Create 3 products --> Category equipment
+        Product product1 = createProduct(productId1, "Product 1", product1Price, CategoryEnum.EQUIPMENT);
+        Product product2 = createProduct(productId2, "Product 2", product2Price, CategoryEnum.EQUIPMENT);
+        Product product3 = createProduct(productId3, "Product 3", product3Price, CategoryEnum.EQUIPMENT);
+
+        /*
+        Shipping 0 --> Free shipping
+        Products --> 3. Three different equipment products (Quantities can vary)
+        Discounts --> 0. The cheapest product should be free
+
+        Total = 90 - 0 + 0 = 90
+        */
+        BigDecimal expectedTotalPrice = product1Price
+                .add(product2Price)
+                .add(product3Price);
+
+        CartProduct cartProduct1 = createCartProduct(cartId, productId1, product1, 1);
+        CartProduct cartProduct2 = createCartProduct(cartId, productId2, product2, 1);
+        CartProduct cartProduct3 = createCartProduct(cartId, productId3, product3, 1);
+
+        when(cartProductRepository.findAllByCartId(UUID.fromString(cartId))).thenReturn(List.of(cartProduct1, cartProduct2, cartProduct3));
+
+        //Call service
+        TotalsDTO totalsDTO = cartService.calculateTotals(cartId);
+
+        assertNotNull(totalsDTO);
+        assertEquals(3, totalsDTO.getProducts());
+        assertEquals(0, BigDecimal.valueOf(0).compareTo(totalsDTO.getShippingPrice()));
+        assertEquals(0, BigDecimal.valueOf(0).compareTo(totalsDTO.getDiscounts()));
+        assertEquals(0, expectedTotalPrice.compareTo(totalsDTO.getTotalPrice()));
+    }
+
+    @Test
+    void calculateTotals_ValidCartIdWithAccessoriesPromotion_AppliesDiscountInAccessories() {
+        String cartId = UUID.randomUUID().toString();
+        UUID productId1 = UUID.randomUUID();
+        UUID productId2 = UUID.randomUUID();
+        UUID productId3 = UUID.randomUUID();
+
+        /*Create 3 products --> Category accessories
+        The products sum a total of 90. So, the discount is applicable
+                FIRST PRODUCT PRICE = 100 / 1.10 = 90
+                SECOND PRODUCT PRICE = 200 / 1.10 = 180
+                THIRD PRODUCT PRICE = 300 / 1.10 = 270*/
+
+        BigDecimal product1Price = BigDecimal.valueOf(100);
+        BigDecimal product2Price = BigDecimal.valueOf(200);
+        BigDecimal product3Price = BigDecimal.valueOf(300);
+
+        Product product1 = createProduct(productId1, "Product 1", product1Price, CategoryEnum.ACCESSORIES);
+        Product product2 = createProduct(productId2, "Product 2", product2Price, CategoryEnum.ACCESSORIES);
+        Product product3 = createProduct(productId3, "Product 3", product3Price, CategoryEnum.ACCESSORIES);
+
+        CartProduct cartProduct1 = createCartProduct(cartId, productId1, product1, 1);
+        CartProduct cartProduct2 = createCartProduct(cartId, productId2, product2, 1);
+        CartProduct cartProduct3 = createCartProduct(cartId, productId3, product3, 1);
+
+        /*
+        Shipping 6 --> 5 base cost + 1 for buying accessories (fixed price)
+        Products --> 3. Three different equipment products (Quantities can vary)
+        Discounts --> 10 + 20 + 30 --> 10% of discount = 60
+
+        Total = 600 - 60 + 6 = 546
+        */
+        BigDecimal expectedShippingPrice = BigDecimal.valueOf(5)
+                .add(BigDecimal.valueOf(1)); //Base price + 1 (accessories)
+
+        when(cartProductRepository.findAllByCartId(UUID.fromString(cartId))).thenReturn(List.of(cartProduct1, cartProduct2, cartProduct3));
+
+        //Call service
+        TotalsDTO totalsDTO = cartService.calculateTotals(cartId);
+
+        assertNotNull(totalsDTO);
+        assertEquals(3, totalsDTO.getProducts());
+        assertEquals(0, expectedShippingPrice.compareTo(totalsDTO.getShippingPrice()));
+
+        //To simplify these magic numbers are exposed, but should be calculated
+        assertEquals(0, BigDecimal.valueOf(60).compareTo(totalsDTO.getDiscounts()));
+        assertEquals(0, BigDecimal.valueOf(546).compareTo(totalsDTO.getTotalPrice()));
     }
 
     @Test
     void addProducts_InvalidCartId_ThrowsEntityNotFoundException() {
-        // Arrange
         String invalidCartId = UUID.randomUUID().toString();
         UUID productId = UUID.randomUUID();
         int quantity = 2;
@@ -296,7 +430,18 @@ class CartServiceImplTest {
 
         when(cartRepository.findById(UUID.fromString(invalidCartId))).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> cartService.addProducts(invalidCartId, productQuantityDTO));
+    }
+
+    private Product createProduct(UUID id, String name, BigDecimal price, CategoryEnum category) {
+        return Product.builder().id(id).name(name).price(price).category(category).build();
+    }
+
+    private CartProduct createCartProduct(String cartId, UUID productId, Product product, int quantity) {
+        return CartProduct.builder()
+                .id(new CartProductId(UUID.fromString(cartId), productId))
+                .product(product)
+                .quantity(quantity)
+                .build();
     }
 }
