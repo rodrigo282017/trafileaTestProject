@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/trafilea
+    username: trafilea
+    password: postgres
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/db.changelog.yaml
+    enabled: true

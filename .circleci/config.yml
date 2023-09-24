@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:20.0.1
+
+    working_directory: ~/trafileaTestProject
+
+    steps:
+      - checkout
+
+      - run:
+          name: List files in directory
+          command: ls -l
+
+      - run:
+          name: Run tests
+          command: ./gradlew test
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
