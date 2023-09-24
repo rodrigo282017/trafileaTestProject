@@ -1,5 +1,29 @@
 # Getting Started
 
+## To run the project
+
+### Prerequisites
+
+- Docker must be installed on your system. You can download it from [Docker's official website](https://www.docker.com/get-started).
+
+## Usage
+
+1. Clone this repository to your local machine.
+
+2. Open a terminal and navigate to the project directory.
+
+3. The project is configured to use jdk 17. If it is not configured, make sure to do it.
+
+4. The postgres image is using port 5432. Make sure this connection is available before to use it, or change it in the compose.yaml file
+
+5. Run the project
+
+## Additional Details
+
+- The Docker image configuration for PostgreSQL can be found in the `compose.yml` file in the project root directory.
+- Make sure to customize the PostgreSQL configuration in the `compose.yml` file to suit your specific needs.
+- [Docker Compose File](./compose.yaml)
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:
