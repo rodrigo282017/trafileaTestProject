@@ -1,5 +1,7 @@
 package com.example.trafileatestproject.service.impl;
 
+import com.example.trafileatestproject.exceptions.EntityNotFoundException;
+import com.example.trafileatestproject.exceptions.ValidationException;
 import com.example.trafileatestproject.model.api.CartDTO;
 import com.example.trafileatestproject.model.api.CartProductDTO;
 import com.example.trafileatestproject.model.api.CategoryEnum;
@@ -20,9 +22,9 @@ import com.example.trafileatestproject.repository.CartRepository;
 import com.example.trafileatestproject.service.ICartService;
 import com.example.trafileatestproject.service.IProductService;
 import com.example.trafileatestproject.service.IUserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -49,6 +51,7 @@ public class CartServiceImpl implements ICartService {
     private final CartProductRepository cartProductRepository;
 
     @Override
+    @Transactional
     public CartDTO createEmptyCart(String userId) {
         UserDTO userDTO = userService.getUserById(userId);
 
@@ -63,12 +66,14 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
+    @Transactional
     public CartDTO addProducts(String id, ProductQuantityDTO productQuantityDTO) {
+        validateRequest(productQuantityDTO);
         Set<ProductQuantityDTO> productQuantityDTOList = new HashSet<>();
 
         // First get the cart created without products
         Cart cart = cartRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new EntityNotFoundException("Cart not found for this id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found", "Could not find cart.", id));
 
         // Then check if the product exists
         ProductDTO productDTO = productService.getProductById(productQuantityDTO.getProductId().toString());
@@ -126,11 +131,12 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
+    @Transactional
     public CartProductDTO modifyProductQuantity(String id, String productId, int quantity) {
         //Check first if the product exists
         CartProduct cartProduct = cartProductRepository.findByCartIdAndProductId(UUID.fromString(id), UUID.fromString(productId))
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Cart Product not found for this id: " + id + " and productId: " + productId));
+                        new EntityNotFoundException("Cart not found", "Could not find cart for this productId.", id, productId, quantity));
 
         //Set the new quantity
         cartProduct.setQuantity(quantity);
@@ -144,7 +150,7 @@ public class CartServiceImpl implements ICartService {
     @Override
     public CartDTO getCartById(String id) {
         Cart cart = cartRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new EntityNotFoundException("Cart not found for this id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found", "Could not find cart.", id));
 
         Set<CartProduct> cartProductDTO = new HashSet<>(cartProductRepository.findAllByCartId(cart.getId()));
         Set<ProductQuantityDTO> productQuantityDTOSet = new HashSet<>();
@@ -310,5 +316,16 @@ public class CartServiceImpl implements ICartService {
         }
 
         return totalDiscounts.setScale(2, RoundingMode.UP);
+    }
+
+    private void validateRequest(ProductQuantityDTO productQuantityDTO) {
+        if (productQuantityDTO.getProductId() == null || productQuantityDTO.getQuantity() <= 0) {
+            throw new ValidationException(
+                    "MissingRequiredParameters",
+                    "ProductId and quantity are required",
+                    productQuantityDTO.getProductId(),
+                    productQuantityDTO.getQuantity()
+            );
+        }
     }
 }

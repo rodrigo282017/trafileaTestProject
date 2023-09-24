@@ -19,7 +19,7 @@ public class UserMapper implements Mapper<UserDTO, User> {
     }
 
     @Override
-    public List<UserDTO> toDtos(List<User> users) {
+    public List<UserDTO> toDTOs(List<User> users) {
         return users.stream().map(this::toDto).toList();
     }
 

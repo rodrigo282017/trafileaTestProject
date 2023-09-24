@@ -6,7 +6,6 @@ import com.example.trafileatestproject.util.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class ProductMapper implements Mapper<ProductDTO, Product> {
@@ -22,7 +21,7 @@ public class ProductMapper implements Mapper<ProductDTO, Product> {
     }
 
     @Override
-    public List<ProductDTO> toDtos(List<Product> products) {
+    public List<ProductDTO> toDTOs(List<Product> products) {
         return products.stream().map(this::toDto).toList();
     }
 

@@ -19,9 +19,9 @@ CREATE TABLE cart
 CREATE TABLE product
 (
     id       uuid primary key not null,
-    name     VARCHAR(256),
-    price    numeric(38, 2),
-    category VARCHAR(256)
+    name     VARCHAR(256) not null,
+    price    numeric(38, 2) not null,
+    category VARCHAR(256) not null
 );
 
 CREATE TABLE cart_product

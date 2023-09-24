@@ -18,7 +18,7 @@ public class CartMapper implements Mapper<CartDTO, Cart> {
     }
 
     @Override
-    public List<CartDTO> toDtos(List<Cart> carts) {
+    public List<CartDTO> toDTOs(List<Cart> carts) {
         return carts.stream().map(this::toDto).toList();
     }
 

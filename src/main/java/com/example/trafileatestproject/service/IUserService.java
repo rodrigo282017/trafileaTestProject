@@ -1,6 +1,5 @@
 package com.example.trafileatestproject.service;
 
-import com.example.trafileatestproject.model.api.ProductDTO;
 import com.example.trafileatestproject.model.api.UserDTO;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface IUserService {
 
     UserDTO createUser(UserDTO userDTO);
 
-    UserDTO updateProduct(String id, UserDTO userDTO);
+    UserDTO updateUser(String id, UserDTO userDTO);
 
     void deleteUser(String id);
 }

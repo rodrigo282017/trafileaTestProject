@@ -2,13 +2,8 @@ package com.example.trafileatestproject.service;
 
 import com.example.trafileatestproject.model.api.CartDTO;
 import com.example.trafileatestproject.model.api.CartProductDTO;
-import com.example.trafileatestproject.model.api.ProductDTO;
 import com.example.trafileatestproject.model.api.ProductQuantityDTO;
 import com.example.trafileatestproject.model.api.TotalsDTO;
-
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public interface ICartService {
     CartDTO createEmptyCart(String userId);

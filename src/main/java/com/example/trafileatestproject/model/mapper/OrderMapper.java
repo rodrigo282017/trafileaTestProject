@@ -16,7 +16,7 @@ public class OrderMapper implements Mapper<OrderDTO, Order> {
     }
 
     @Override
-    public List<OrderDTO> toDtos(List<Order> orders) {
+    public List<OrderDTO> toDTOs(List<Order> orders) {
         return null;
     }
 

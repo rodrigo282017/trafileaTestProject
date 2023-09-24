@@ -9,6 +9,7 @@ import com.example.trafileatestproject.service.ICartService;
 import com.example.trafileatestproject.service.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -18,6 +19,7 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderRepository orderRepository;
 
     @Override
+    @Transactional
     public OrderDTO createOrder(String cartId) {
         CartDTO cartDTO = cartService.getCartById(cartId);
         TotalsDTO totalsDTO = cartService.calculateTotals(cartId);
