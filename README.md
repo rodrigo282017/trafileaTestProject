@@ -16,7 +16,9 @@
 
 4. The postgres image is using port 5432. Make sure this connection is available before to use it, or change it in the compose.yaml file
 
-5. Run the project
+5. Move to feature/test-trafilea branch. The test changes are in that branch. After the revision it will be merged to main
+
+6. Run the project
 
 ## Additional Details
 
